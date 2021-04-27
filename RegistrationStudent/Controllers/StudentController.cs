@@ -58,14 +58,27 @@ namespace RegistrationStudent.Controllers
 
         }
         [HttpGet]
-        public string StudentDetail(string name,int malayalam,int hindi,int english)
+        public string StudentDetail(int id)
         {
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             SqlCommand command = new SqlCommand("StudentDetails", connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("Id", id);
             var stud = new List<Student>();
-            SqlDataReader
+            SqlDataReader reader = command.ExecuteReader();
+            while(reader.Read())
+            {
+                var student = new Student();
+                //student.Id = Convert.ToInt32(reader["Id"]);
+                student.Name = reader["Name"].ToString();
+                student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
+                student.Hindi = Convert.ToInt32(reader["Hindi"]);
+                student.English = Convert.ToInt32(reader["English"]);
+                stud.Add(student);
+            }
+
+            return stud.ToString();
 
         }
     } }
