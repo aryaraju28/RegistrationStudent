@@ -58,9 +58,10 @@ namespace RegistrationStudent.Controllers
 
         }
         [HttpGet]
-        public IHttpActionResult StudentDetail(int id)
+        public Student StudentDetail(int id)
         {
-            List<Student> stud = new List<Student>();
+            
+            //List<Student> stud = new List<Student>();
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             SqlCommand command = new SqlCommand("StudentDetails", connection);
@@ -68,31 +69,52 @@ namespace RegistrationStudent.Controllers
             command.Parameters.AddWithValue("Id", id);
 
             SqlDataReader reader = command.ExecuteReader();
-            while(reader.Read())
-            {
-                var student = new Student();
-                student.Id = id;
-                //student.Id = Convert.ToInt32(reader["Id"]);
+             reader.Read();
+            
+                Student student = new Student();
+                student.Id = Convert.ToInt32(id);
+                 //student.Id = Convert.ToInt32(reader["Id"]);
+                 student.Name = reader["Name"].ToString();
+                 student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
+                 student.Hindi = Convert.ToInt32(reader["Hindi"]);
+                  student.English = Convert.ToInt32(reader["English"]);
+            
+          
+            reader.Close();
+            connection.Close();
+            return student;
+            
+
+            
+
+           
+
+           
+        }
+        public Student StudentList(int order)
+        {
+            
+            
+                SqlConnection connection = new SqlConnection(connectionString);
+                connection.Open();
+                SqlCommand command = new SqlCommand("StudentList", connection);
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+              
+
+            SqlDataReader reader = command.ExecuteReader();
+                reader.Read();
+
+                Student student = new Student();
+
+                 student.Order = order;
                 student.Name = reader["Name"].ToString();
                 student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
                 student.Hindi = Convert.ToInt32(reader["Hindi"]);
                 student.English = Convert.ToInt32(reader["English"]);
-               
-                stud.Add(student);
-                //stud.Add(new Student()
-                //{
-                //    Id = Convert.ToInt32(reader.GetValue(0)),
-                //    Name = reader.GetValue(1).ToString(),
-                //    Malayalam = Convert.ToInt32(reader.GetValue(2)),
-                //    Hindi = Convert.ToInt32(reader.GetValue(3)),
-                //    English = Convert.ToInt32(reader.GetValue(4))
-                //});
+                reader.Close();
+                connection.Close();
+                return student;
+            
 
-            }
-
-            return Ok(stud);
-
-           
         }
-        public IHttpActionResult StudentList()
     } }
