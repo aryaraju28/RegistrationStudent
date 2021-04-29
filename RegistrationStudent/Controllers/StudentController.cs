@@ -11,7 +11,7 @@ namespace RegistrationStudent.Controllers
 {
     public class StudentController : ApiController
     {
-        String connectionString = "Server=RAED_COMPUTER\\SQLEXPRESS;Database=SchoolManagement;Trusted_Connection=True;";
+        String connectionString = "Server=RAED_COMPUTER\\SQLEXPRESS;Database=SchoolManagementSystem;Trusted_Connection=True;";
         [HttpGet]
         public string StudentInsert(string name, int malayalam, int hindi, int english)
         {
@@ -19,7 +19,7 @@ namespace RegistrationStudent.Controllers
             connection.Open();
             DateTime currentTime = DateTime.Now;
             currentTime.ToString("hh:mm:tt");
-            SqlCommand command = new SqlCommand("StudentInsert", connection);
+            SqlCommand command = new SqlCommand("StudentSave", connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
             command.Parameters.AddWithValue("Name", name);
             command.Parameters.AddWithValue("Malayalam", malayalam);
@@ -36,6 +36,7 @@ namespace RegistrationStudent.Controllers
             student.CurrentTime = currentTime.ToString();
 
             return student.ToString();
+            
 
 
         }
@@ -48,13 +49,18 @@ namespace RegistrationStudent.Controllers
             command.CommandType = System.Data.CommandType.StoredProcedure;
             command.Parameters.AddWithValue("Id", id);
             command.Parameters.AddWithValue("Name", name);
+           
+
             command.ExecuteNonQuery();
             Student student = new Student();
             student.Id = id;
             student.Name = name;
+          
             return student.ToString();
 
+            
 
+            
 
         }
         [HttpGet]
@@ -91,6 +97,7 @@ namespace RegistrationStudent.Controllers
 
            
         }
+        [HttpGet]
         public Student StudentList(int order)
         {
             
@@ -106,7 +113,7 @@ namespace RegistrationStudent.Controllers
 
                 Student student = new Student();
 
-                 student.Order = order;
+                 
                 student.Name = reader["Name"].ToString();
                 student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
                 student.Hindi = Convert.ToInt32(reader["Hindi"]);
@@ -117,4 +124,44 @@ namespace RegistrationStudent.Controllers
             
 
         }
+        [HttpGet]
+        public Student StudentUpdate()
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand("StudentLastUpdate", connection);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            SqlDataReader reader = command.ExecuteReader();
+            reader.Read();
+
+            Student student = new Student();
+            student.Id = Convert.ToInt32(reader["Id"]);
+            
+            student.Name = reader["Name"].ToString();
+            
+            reader.Close();
+            connection.Close();
+            return student;
+        }
+        [HttpGet]
+        public Student StudentSave()
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand("StudentSave", connection);
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            SqlDataReader reader = command.ExecuteReader();
+            reader.Read();
+
+            Student student = new Student();
+            student.Id = Convert.ToInt32(reader["Id"]);
+
+            student.CurrentTime = reader["Time"].ToString();
+
+            reader.Close();
+            connection.Close();
+            return student;
+
+        }
+
     } }
