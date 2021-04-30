@@ -14,6 +14,8 @@ namespace RegistrationStudent.Models
         public int Hindi { get; set; }
         public int English { get; set; }
         public string CurrentTime { get; set; }
-       
+        public int Total { get; set; }
+        public int Average { get; set; }
+
     }
 }

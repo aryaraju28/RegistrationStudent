@@ -13,7 +13,7 @@ namespace RegistrationStudent.Controllers
     {
         String connectionString = "Server=RAED_COMPUTER\\SQLEXPRESS;Database=SchoolManagementSystem;Trusted_Connection=True;";
         [HttpGet]
-        public string StudentInsert(string name, int malayalam, int hindi, int english)
+        public string StudentSave(string name, int malayalam, int hindi, int english)
         {
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
@@ -25,18 +25,23 @@ namespace RegistrationStudent.Controllers
             command.Parameters.AddWithValue("Malayalam", malayalam);
             command.Parameters.AddWithValue("Hindi", hindi);
             command.Parameters.AddWithValue("English", english);
-            command.Parameters.AddWithValue("Time", currentTime);
-            command.ExecuteNonQuery();
-            connection.Close();
-            Student student = new Student();
-            student.Name = name;
-            student.Malayalam = malayalam;
-            student.Hindi = hindi;
-            student.English = english;
-            student.CurrentTime = currentTime.ToString();
+            command.Parameters.Add("@LastStudentId", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.Output;
+            command.Parameters.Add("@CreateTime", System.Data.SqlDbType.VarChar,50).Direction = System.Data.ParameterDirection.Output;
 
-            return student.ToString();
-            
+            //command.Parameters.AddWithValue("Time", currentTime);
+            command.ExecuteNonQuery();
+            //connection.Close();
+            //Student student = new Student();
+            //student.Name = name;
+            //student.Malayalam = malayalam;
+            //student.Hindi = hindi;
+            //student.English = english;
+            //student.CurrentTime = currentTime.ToString();
+
+
+            string id = command.Parameters["@LastStudentId"].Value.ToString();
+            string time = command.Parameters["@CreateTime"].Value.ToString();
+            return "Inserted Sucessfully Id=" + id + " " + " CreatedTime=" + time;
 
 
         }
@@ -75,15 +80,17 @@ namespace RegistrationStudent.Controllers
             command.Parameters.AddWithValue("Id", id);
 
             SqlDataReader reader = command.ExecuteReader();
-             reader.Read();
+            reader.Read();
             
-                Student student = new Student();
-                student.Id = Convert.ToInt32(id);
+            Student student = new Student();
+            student.Id = Convert.ToInt32(id);
                  //student.Id = Convert.ToInt32(reader["Id"]);
-                 student.Name = reader["Name"].ToString();
-                 student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
-                 student.Hindi = Convert.ToInt32(reader["Hindi"]);
-                  student.English = Convert.ToInt32(reader["English"]);
+            student.Name = reader["Name"].ToString();
+            student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
+            student.Hindi = Convert.ToInt32(reader["Hindi"]);
+            student.English = Convert.ToInt32(reader["English"]);
+            student.Total = Convert.ToInt32(reader["Total"]);
+            student.Average = Convert.ToInt32(reader["Average"]);
             
           
             reader.Close();
@@ -106,21 +113,27 @@ namespace RegistrationStudent.Controllers
                 connection.Open();
                 SqlCommand command = new SqlCommand("StudentList", connection);
                 command.CommandType = System.Data.CommandType.StoredProcedure;
-              
+                 command.Parameters.AddWithValue("Order", order);
+
 
             SqlDataReader reader = command.ExecuteReader();
-                reader.Read();
 
+            
+            
                 Student student = new Student();
 
-                 
+
                 student.Name = reader["Name"].ToString();
                 student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
                 student.Hindi = Convert.ToInt32(reader["Hindi"]);
                 student.English = Convert.ToInt32(reader["English"]);
+              
+            
                 reader.Close();
                 connection.Close();
-                return student;
+            return student;
+
+            
             
 
         }
@@ -143,25 +156,25 @@ namespace RegistrationStudent.Controllers
             connection.Close();
             return student;
         }
-        [HttpGet]
-        public Student StudentSave()
-        {
-            SqlConnection connection = new SqlConnection(connectionString);
-            connection.Open();
-            SqlCommand command = new SqlCommand("StudentSave", connection);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
-            SqlDataReader reader = command.ExecuteReader();
-            reader.Read();
+        //[HttpGet]
+        //public Student StudentSave()
+        //{
+        //    SqlConnection connection = new SqlConnection(connectionString);
+        //    connection.Open();
+        //    SqlCommand command = new SqlCommand("StudentSave", connection);
+        //    command.CommandType = System.Data.CommandType.StoredProcedure;
+        //    SqlDataReader reader = command.ExecuteReader();
+        //    reader.Read();
 
-            Student student = new Student();
-            student.Id = Convert.ToInt32(reader["Id"]);
+        //    Student student = new Student();
+        //    student.Id = Convert.ToInt32(reader["Id"]);
 
-            student.CurrentTime = reader["Time"].ToString();
+        //    student.CurrentTime = reader["Time"].ToString();
 
-            reader.Close();
-            connection.Close();
-            return student;
+        //    reader.Close();
+        //    connection.Close();
+        //    return student;
 
-        }
+        //}
 
     } }
