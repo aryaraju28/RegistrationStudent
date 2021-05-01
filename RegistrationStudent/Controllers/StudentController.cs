@@ -60,12 +60,15 @@ namespace RegistrationStudent.Controllers
             Student student = new Student();
             student.Id = id;
             student.Name = name;
-          
-            return student.ToString();
+            command.Parameters.Add("@Id", System.Data.SqlDbType.Int).Direction = System.Data.ParameterDirection.Output;
+            command.Parameters.Add("@Name", System.Data.SqlDbType.VarChar, 20).Direction = System.Data.ParameterDirection.Output;
 
-            
+            //return student.ToString();
+            return "Updated Sucessfully Id=" + id + " " + " Name=" + name;
 
-            
+
+
+
 
         }
         [HttpGet]
