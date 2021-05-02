@@ -46,7 +46,7 @@ namespace RegistrationStudent.Controllers
 
         }
         [HttpGet]
-        public string Update(int id,string name)
+        public string StudentUpdate(int id,string name)
         {
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
@@ -108,9 +108,9 @@ namespace RegistrationStudent.Controllers
            
         }
         [HttpGet]
-        public Student StudentList(int order)
+        public List<Student> StudentList(int order)
         {
-            
+            List<Student> stud = new List<Student>();
             
                 SqlConnection connection = new SqlConnection(connectionString);
                 connection.Open();
@@ -119,10 +119,12 @@ namespace RegistrationStudent.Controllers
                  command.Parameters.AddWithValue("Order", order);
 
 
-            SqlDataReader reader = command.ExecuteReader();
+                SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
 
-            
-            
+
+
                 Student student = new Student();
 
 
@@ -130,35 +132,39 @@ namespace RegistrationStudent.Controllers
                 student.Malayalam = Convert.ToInt32(reader["Malayalam"]);
                 student.Hindi = Convert.ToInt32(reader["Hindi"]);
                 student.English = Convert.ToInt32(reader["English"]);
+                student.CurrentTime = reader["Time"].ToString();
+                stud.Add(student);
+            }
               
             
                 reader.Close();
                 connection.Close();
-            return student;
+            return stud;
+               
 
             
             
-
+                
         }
-        [HttpGet]
-        public Student StudentUpdate()
-        {
-            SqlConnection connection = new SqlConnection(connectionString);
-            connection.Open();
-            SqlCommand command = new SqlCommand("StudentLastUpdate", connection);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
-            SqlDataReader reader = command.ExecuteReader();
-            reader.Read();
+        //[HttpGet]
+        //public Student StudentUpdate()
+        //{
+        //    SqlConnection connection = new SqlConnection(connectionString);
+        //    connection.Open();
+        //    SqlCommand command = new SqlCommand("StudentLastUpdate", connection);
+        //    command.CommandType = System.Data.CommandType.StoredProcedure;
+        //    SqlDataReader reader = command.ExecuteReader();
+        //    reader.Read();
 
-            Student student = new Student();
-            student.Id = Convert.ToInt32(reader["Id"]);
+        //    Student student = new Student();
+        //    student.Id = Convert.ToInt32(reader["Id"]);
             
-            student.Name = reader["Name"].ToString();
+        //    student.Name = reader["Name"].ToString();
             
-            reader.Close();
-            connection.Close();
-            return student;
-        }
+        //    reader.Close();
+        //    connection.Close();
+        //    return student;
+        //}
         //[HttpGet]
         //public Student StudentSave()
         //{
